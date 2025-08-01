@@ -44,7 +44,7 @@ local default_config = {
   width = 0.8,
   height = 0.8,
   preview_width = 0.5,
-  prompt = '> ',
+  prompt = '🪿 ',
   title = 'FFF Files',
   max_results = 60, -- Maximum number of search results
   max_threads = 4, -- Maximum threads for fuzzy search
@@ -55,14 +55,10 @@ local default_config = {
     select_split = '<C-s>',
     select_vsplit = '<C-v>',
     select_tab = '<C-t>',
-    move_up = '<Up>',
-    move_down = '<Down>',
-    move_up_alt = '<C-p>', -- Ctrl+p for up (like in many CLI tools)
-    move_down_alt = '<C-n>', -- Ctrl+n for down (like in many CLI tools)
-    move_up_vim = 'k', -- k/j only work in normal mode
-    move_down_vim = 'j', -- k/j only work in normal mode
-    preview_scroll_up = '<C-u>', -- Scroll preview up by half window height
-    preview_scroll_down = '<C-d>', -- Scroll preview down by half window height
+    move_up = { '<Up>', '<C-p>' },
+    move_down = { '<Down>', '<C-n>' },
+    preview_scroll_up = '<C-u>',
+    preview_scroll_down = '<C-d>',
   },
 
   hl = {
@@ -229,23 +225,57 @@ function M.setup_windows()
   vim.api.nvim_win_set_option(M.state.preview_win, 'foldcolumn', '0')
 end
 
+local function normalize_keys(keys)
+  if type(keys) == 'string' then
+    return { keys }
+  elseif type(keys) == 'table' then
+    return keys
+  else
+    return {}
+  end
+end
+
 --- Setup keymaps
 function M.setup_keymaps()
   local keymaps = M.state.config.keymaps
 
   local input_opts = { buffer = M.state.input_buf, noremap = true, silent = true }
 
-  vim.keymap.set('i', keymaps.close, M.close, input_opts)
-  vim.keymap.set('i', keymaps.select, M.select, input_opts)
-  vim.keymap.set('i', keymaps.select_split, function() M.select('split') end, input_opts)
-  vim.keymap.set('i', keymaps.select_vsplit, function() M.select('vsplit') end, input_opts)
-  vim.keymap.set('i', keymaps.select_tab, function() M.select('tab') end, input_opts)
-  vim.keymap.set('i', keymaps.move_up, M.move_up, input_opts)
-  vim.keymap.set('i', keymaps.move_down, M.move_down, input_opts)
-  vim.keymap.set('i', keymaps.move_up_alt, M.move_up, input_opts) -- Ctrl+p
-  vim.keymap.set('i', keymaps.move_down_alt, M.move_down, input_opts) -- Ctrl+n
-  vim.keymap.set('i', keymaps.preview_scroll_up, M.scroll_preview_up, input_opts)
-  vim.keymap.set('i', keymaps.preview_scroll_down, M.scroll_preview_down, input_opts)
+  for _, key in ipairs(normalize_keys(keymaps.close)) do
+    vim.keymap.set('i', key, M.close, input_opts)
+  end
+
+  for _, key in ipairs(normalize_keys(keymaps.select)) do
+    vim.keymap.set('i', key, M.select, input_opts)
+  end
+
+  for _, key in ipairs(normalize_keys(keymaps.select_split)) do
+    vim.keymap.set('i', key, function() M.select('split') end, input_opts)
+  end
+
+  for _, key in ipairs(normalize_keys(keymaps.select_vsplit)) do
+    vim.keymap.set('i', key, function() M.select('vsplit') end, input_opts)
+  end
+
+  for _, key in ipairs(normalize_keys(keymaps.select_tab)) do
+    vim.keymap.set('i', key, function() M.select('tab') end, input_opts)
+  end
+
+  for _, key in ipairs(normalize_keys(keymaps.move_up)) do
+    vim.keymap.set('i', key, M.move_up, input_opts)
+  end
+
+  for _, key in ipairs(normalize_keys(keymaps.move_down)) do
+    vim.keymap.set('i', key, M.move_down, input_opts)
+  end
+
+  for _, key in ipairs(normalize_keys(keymaps.preview_scroll_up)) do
+    vim.keymap.set('i', key, M.scroll_preview_up, input_opts)
+  end
+
+  for _, key in ipairs(normalize_keys(keymaps.preview_scroll_down)) do
+    vim.keymap.set('i', key, M.scroll_preview_down, input_opts)
+  end
 
   vim.keymap.set('i', '<C-w>', function()
     local col = vim.fn.col('.') - 1
@@ -269,19 +299,41 @@ function M.setup_keymaps()
 
   local list_opts = { buffer = M.state.list_buf, noremap = true, silent = true }
 
-  vim.keymap.set('n', keymaps.close, M.close, list_opts)
-  vim.keymap.set('n', keymaps.select, M.select, list_opts)
-  vim.keymap.set('n', keymaps.select_split, function() M.select('split') end, list_opts)
-  vim.keymap.set('n', keymaps.select_vsplit, function() M.select('vsplit') end, list_opts)
-  vim.keymap.set('n', keymaps.select_tab, function() M.select('tab') end, list_opts)
-  vim.keymap.set('n', keymaps.move_up, M.move_up, list_opts)
-  vim.keymap.set('n', keymaps.move_down, M.move_down, list_opts)
-  vim.keymap.set('n', keymaps.move_up_alt, M.move_up, list_opts) -- Ctrl+p
-  vim.keymap.set('n', keymaps.move_down_alt, M.move_down, list_opts) -- Ctrl+n
-  vim.keymap.set('n', keymaps.move_up_vim, M.move_up, list_opts) -- k (normal mode only)
-  vim.keymap.set('n', keymaps.move_down_vim, M.move_down, list_opts) -- j (normal mode only)
-  vim.keymap.set('n', keymaps.preview_scroll_up, M.scroll_preview_up, list_opts)
-  vim.keymap.set('n', keymaps.preview_scroll_down, M.scroll_preview_down, list_opts)
+  for _, key in ipairs(normalize_keys(keymaps.close)) do
+    vim.keymap.set('n', key, M.close, list_opts)
+  end
+
+  for _, key in ipairs(normalize_keys(keymaps.select)) do
+    vim.keymap.set('n', key, M.select, list_opts)
+  end
+
+  for _, key in ipairs(normalize_keys(keymaps.select_split)) do
+    vim.keymap.set('n', key, function() M.select('split') end, list_opts)
+  end
+
+  for _, key in ipairs(normalize_keys(keymaps.select_vsplit)) do
+    vim.keymap.set('n', key, function() M.select('vsplit') end, list_opts)
+  end
+
+  for _, key in ipairs(normalize_keys(keymaps.select_tab)) do
+    vim.keymap.set('n', key, function() M.select('tab') end, list_opts)
+  end
+
+  for _, key in ipairs(normalize_keys(keymaps.move_up)) do
+    vim.keymap.set('n', key, M.move_up, list_opts)
+  end
+
+  for _, key in ipairs(normalize_keys(keymaps.move_down)) do
+    vim.keymap.set('n', key, M.move_down, list_opts)
+  end
+
+  for _, key in ipairs(normalize_keys(keymaps.preview_scroll_up)) do
+    vim.keymap.set('n', key, M.scroll_preview_up, list_opts)
+  end
+
+  for _, key in ipairs(normalize_keys(keymaps.preview_scroll_down)) do
+    vim.keymap.set('n', key, M.scroll_preview_down, list_opts)
+  end
 
   vim.api.nvim_buf_attach(M.state.input_buf, false, {
     on_lines = function()
@@ -394,14 +446,36 @@ end
 function M.on_input_change()
   if not M.state.active then return end
 
-  local full_line = vim.fn.getline('.')
-
+  local lines = vim.api.nvim_buf_get_lines(M.state.input_buf, 0, -1, false)
   local prompt_len = #M.state.config.prompt
   local query = ''
 
-  if full_line:sub(1, prompt_len) == M.state.config.prompt then query = full_line:sub(prompt_len + 1) end
+  if #lines > 1 then
+    -- join without any separator because it is a use case for a path copy from the terminal buffer
+    local all_text = table.concat(lines, '')
+    if all_text:sub(1, prompt_len) == M.state.config.prompt then
+      query = all_text:sub(prompt_len + 1)
+    else
+      query = all_text
+    end
 
-  M.state.query = query -- DEBUG
+    query = query:gsub('\r', ''):match('^%s*(.-)%s*$') or ''
+
+    vim.api.nvim_buf_set_option(M.state.input_buf, 'modifiable', true)
+    vim.api.nvim_buf_set_lines(M.state.input_buf, 0, -1, false, { M.state.config.prompt .. query })
+
+    -- Move cursor to end
+    vim.schedule(function()
+      if M.state.active and M.state.input_win and vim.api.nvim_win_is_valid(M.state.input_win) then
+        vim.api.nvim_win_set_cursor(M.state.input_win, { 1, prompt_len + #query })
+      end
+    end)
+  else
+    local full_line = lines[1] or ''
+    if full_line:sub(1, prompt_len) == M.state.config.prompt then query = full_line:sub(prompt_len + 1) end
+  end
+
+  M.state.query = query
 
   if M.state.search_timer then
     M.state.search_timer:stop()

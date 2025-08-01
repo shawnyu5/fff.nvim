@@ -62,62 +62,170 @@ FFF.nvim requires:
 }
 ```
 
-#### packer.nvim
+## Default Configuration
 
 ```lua
-use {
-  'dmtrKovalenko/fff.nvim',
-  requires = { 'MunifTanjim/nui.nvim' },
-  run = 'cargo build --release',
-  config = function()
-    require("fff").setup()
-  end
+require("fff").setup({
+  width = 0.8,
+  height = 0.8,
+  preview_width = 0.5,
+  prompt = '🪿 ',
+  title = 'FFF Files',
+  max_results = 60, -- Maximum number of search results
+  max_threads = 4, -- Maximum threads for fuzzy search
+
+  keymaps = {
+    close = '<Esc>',
+    select = '<CR>',
+    select_split = '<C-s>',
+    select_vsplit = '<C-v>',
+    select_tab = '<C-t>',
+    move_up = { '<Up>', '<C-p>' },
+    move_down = { '<Down>', '<C-n>' },
+    preview_scroll_up = '<C-u>',
+    preview_scroll_down = '<C-d>',
+  },
+
+  hl = {
+    border = 'FloatBorder',
+    normal = 'Normal',
+    cursor = 'CursorLine',
+    matched = 'IncSearch',
+    title = 'Title',
+    prompt = 'Question',
+    active_file = 'Visual',
+    frecency = 'Number',
+    debug = 'Comment',
+  },
+})
+```
+
+### Default Configuration
+
+FFF.nvim comes with sensible defaults. Here's the complete default configuration:
+
+```lua
+require("fff").setup({
+  -- UI dimensions and appearance
+  width = 0.8,          -- Window width as fraction of screen
+  height = 0.8,         -- Window height as fraction of screen
+  preview_width = 0.5,  -- Preview pane width as fraction of picker
+  prompt = '🪿 ',       -- Input prompt symbol
+  title = 'FFF Files',  -- Window title
+  max_results = 60,     -- Maximum search results to display
+  max_threads = 4,      -- Maximum threads for fuzzy search
+
+  -- Key mappings (supports both single keys and arrays for multiple bindings)
+  keymaps = {
+    close = '<Esc>',
+    select = '<CR>',
+    select_split = '<C-s>',
+    select_vsplit = '<C-v>',
+    select_tab = '<C-t>',
+    move_up = { '<Up>', '<C-p>' },        -- Multiple bindings supported
+    move_down = { '<Down>', '<C-n>' },    -- Multiple bindings supported
+    preview_scroll_up = '<C-u>',
+    preview_scroll_down = '<C-d>',
+  },
+
+  -- Highlight groups
+  hl = {
+    border = 'FloatBorder',
+    normal = 'Normal',
+    cursor = 'CursorLine',
+    matched = 'IncSearch',
+    title = 'Title',
+    prompt = 'Question',
+    active_file = 'Visual',
+    frecency = 'Number',
+    debug = 'Comment',
+  },
+
+  -- Debug options
+  debug = {
+    show_scores = false,  -- Toggle with F2 or :FFFDebug
+  },
+})
+```
+
+### Key Features
+
+#### Multiple Key Bindings
+
+You can assign multiple key combinations to the same action:
+
+```lua
+keymaps = {
+  move_up = { '<Up>', '<C-p>', '<C-k>' },    -- Three ways to move up
+  close = { '<Esc>', '<C-c>' },              -- Two ways to close
+  select = '<CR>',                           -- Single binding still works
 }
 ```
+
+#### Multiline Paste Support
+
+The input field automatically handles multiline clipboard content by joining all lines into a single search query. This is particularly useful when copying file paths from terminal output.
+
+#### Debug Mode
+
+Toggle scoring information display:
+
+- Press `F2` while in the picker
+- Use `:FFFDebug` command
+- Enable by default with `debug.show_scores = true`
+
+````
 
 #### vim-plug
 
 ```vim
 Plug 'MunifTanjim/nui.nvim'
 Plug 'dmtrKovalenko/fff.nvim', { 'do': 'cargo build --release' }
-```
+````
 
-### Beta configuration
+## Configuration
 
-I hope you'll help us to tweak the algorithm and imporve the user experience by sharing your scores and usecasese 🫡
+### Default Configuration
+
+FFF.nvim comes with sensible defaults. Here's the complete default configuration:
 
 ```lua
-{
-  "dmtrKovalenko/fff.nvim",
-  build = "cargo build --release",
-  config = function()
-    require("fff").setup({
-      -- UI configuration
-      ui = {
-        width = 0.8,
-        height = 0.8,
-        border = "rounded",
-      },
-      -- File picker options
-      picker = {
-        ignore_patterns = { ".git/", "node_modules/", "target/" },
-        show_hidden = false,
-      },
-      -- Frecency settings
-      frecency = {
-        enabled = true,
-        max_entries = 2000,
-      },
-    })
-  end,
-  keys = {
-    {
-      "<leader>ff",
-      function()
-        require("fff").toggle()
-      end,
-      desc = "Toggle FFF",
-    },
+require("fff").setup({
+  -- UI dimensions and appearance
+  width = 0.8,          -- Window width as fraction of screen
+  height = 0.8,         -- Window height as fraction of screen
+  preview_width = 0.5,  -- Preview pane width as fraction of picker
+  prompt = '🪿 ',       -- Input prompt symbol
+  title = 'FFF Files',  -- Window title
+  max_results = 60,     -- Maximum search results to display
+  max_threads = 4,      -- Maximum threads for fuzzy search
+
+  keymaps = {
+    close = '<Esc>',
+    select = '<CR>',
+    select_split = '<C-s>',
+    select_vsplit = '<C-v>',
+    select_tab = '<C-t>',
+    move_up = { '<Up>', '<C-p>' },        -- Multiple bindings supported
+    move_down = { '<Down>', '<C-n>' },    -- Multiple bindings supported
+    preview_scroll_up = '<C-u>',
+    preview_scroll_down = '<C-d>',
   },
-}
+
+  hl = {
+    border = 'FloatBorder',
+    normal = 'Normal',
+    cursor = 'CursorLine',
+    matched = 'IncSearch',
+    title = 'Title',
+    prompt = 'Question',
+    active_file = 'Visual',
+    frecency = 'Number',
+    debug = 'Comment',
+  },
+
+  debug = {
+    show_scores = true,  -- We hope for your collaboratio
+  },
+})
 ```
