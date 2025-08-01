@@ -1,28 +1,27 @@
-name: Update vimdocs
-
 on:
   push:
-    branches: [main]
-    paths:
-      - doc/**
-      - .github/workflows/panvimdoc.yaml
-
-permissions:
-  contents: write
+    branches:
+      - main
+name: docs
 
 jobs:
   docs:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
-      - uses: kdheepak/panvimdoc@main
+      - name: panvimdoc
+        uses: kdheepak/panvimdoc@main
         with:
-          vimdoc: fff
-          pandoc: doc/vimdoc.md
-          version: NVIM v0.10.0
-          shiftheadinglevelby: 0
-          incrementheadinglevelby: 0
-      - uses: stefanzweifel/git-auto-commit-action@v5
+          vimdoc: fff.nvim
+          version: "Neovim >= 0.8.0"
+          demojify: true
+          treesitter: true
+      - name: Push changes
+        uses: stefanzweifel/git-auto-commit-action@v6
         with:
-          commit_message: "docs: update vimdocs"
-          branch: ${{ github.head_ref }}
+          commit_message: "chore: autgenerate vimdoc"
+          commit_user_name: "github-actions[bot]"
+          commit_user_email: "github-actions[bot]@users.noreply.github.com"
+          commit_author: "github-actions[bot] <github-actions[bot]@users.noreply.github.com>"
