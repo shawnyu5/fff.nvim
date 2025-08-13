@@ -4,9 +4,9 @@ local file_picker = require('fff.file_picker')
 local preview = require('fff.file_picker.preview')
 local icons = require('fff.file_picker.icons')
 local git_utils = require('fff.git_utils')
-local main = require('fff.main')
+local state = require('fff.state')
 
-if main.config and main.config.preview then preview.setup(main.config.preview) end
+if state.config and state.config.preview then preview.setup(state.config.preview) end
 
 M.state = {
   active = false,
@@ -46,9 +46,9 @@ function M.create_ui()
   if not M.state.ns_id then M.state.ns_id = vim.api.nvim_create_namespace('fff_picker_status') end
 
   local debug_enabled_in_preview = M.enabled_preview()
-    and main.config
-    and main.config.debug
-    and main.config.debug.show_scores
+    and state.config
+    and state.config.debug
+    and state.config.debug.show_scores
 
   local width = math.floor(vim.o.columns * config.width)
   local height = math.floor(vim.o.lines * config.height)
@@ -297,13 +297,12 @@ end
 
 --- Toggle debug display
 function M.toggle_debug()
-  local main = require('fff.main')
-  local old_debug_state = main.config.debug.show_scores
-  main.config.debug.show_scores = not main.config.debug.show_scores
-  local status = main.config.debug.show_scores and 'enabled' or 'disabled'
+  local old_debug_state = state.config.debug.show_scores
+  state.config.debug.show_scores = not state.config.debug.show_scores
+  local status = state.config.debug.show_scores and 'enabled' or 'disabled'
   vim.notify('FFF debug scores ' .. status, vim.log.levels.INFO)
 
-  if old_debug_state ~= main.config.debug.show_scores then
+  if old_debug_state ~= state.config.debug.show_scores then
     local current_query = M.state.query
     local current_items = M.state.items
     local current_cursor = M.state.cursor
@@ -472,9 +471,8 @@ function M.render_list()
   local items = M.state.filtered_items
   local lines = {}
 
-  local main = require('fff.main')
-  local max_path_width = main.config.ui and main.config.ui.max_path_width or 80
-  local debug_enabled = main.config and main.config.debug and main.config.debug.show_scores
+  local max_path_width = state.config.ui and state.config.ui.max_path_width or 80
+  local debug_enabled = state.config and state.config.debug and state.config.debug.show_scores
   local win_height = vim.api.nvim_win_get_height(M.state.list_win)
   local display_count = math.min(#items, win_height)
   local empty_lines_needed = win_height - display_count
@@ -950,7 +948,7 @@ function M.open(opts)
     end
   end
 
-  M.state.config = vim.tbl_deep_extend('force', main.config or {}, opts or {})
+  M.state.config = vim.tbl_deep_extend('force', state.config or {}, opts or {})
 
   if not M.create_ui() then
     vim.notify('Failed to create picker UI', vim.log.levels.ERROR)
