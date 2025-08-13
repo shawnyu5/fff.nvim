@@ -87,7 +87,7 @@ local M = {}
 ---@field follow_links boolean Whether to follow symbolic links
 ---@field ignore boolean Whether to respect `.ignore` files
 
----@class Config
+---@class Config user configuration
 ---@field base_path string Base directory for file indexing
 ---@field max_results integer Maximum number of search results to display
 ---@field max_threads integer Maximum number of threads for fuzzy search
