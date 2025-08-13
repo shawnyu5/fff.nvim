@@ -40,10 +40,31 @@ function M.scan_files()
   state.last_scan_time = os.time()
 end
 
+---@class FileItem
+---@field path string
+---@field size integer
+---@field mtime number
+-- add any other FileItem fields your IntoLua returns
+
+---@class Scores
+---@field total number
+---@field base_score number
+---@field filename_bonus number
+---@field special_filename_bonus number
+---@field frecency_boost number
+---@field distance_penalty number
+---@field match_type number
+
+---@class SearchResult fuzzy search result from rust
+---@field items FileItem[]  # list of files
+---@field scores Scores[]   # list of match scores
+---@field total_matched integer
+---@field total_files integer
+
 --- Search files with fuzzy matching using blink.cmp's advanced algorithm
 --- @param query string Search query
 --- @param max_results number Maximum number of results (optional)
---- @param current_file string|nil Path to current file to deprioritize (optional)
+--- @param current_file string? Path to current file to deprioritize (optional)
 --- @return table List of matching files
 function M.search_files(query, max_results, max_threads, current_file)
   if not state.initialized then return {} end
@@ -51,6 +72,7 @@ function M.search_files(query, max_results, max_threads, current_file)
   max_results = max_results or state.config.max_results
   max_threads = max_threads or state.config.max_threads
 
+  ---@return boolean, SearchResult
   local ok, search_result = pcall(fuzzy.fuzzy_search_files, query, max_results, max_threads, current_file)
   if not ok then
     vim.notify('Failed to search files: ' .. tostring(search_result), vim.log.levels.ERROR)

@@ -5,6 +5,7 @@ local M = {}
 ---@field initialized boolean -- if the file picker has been initialized
 ---@field last_scan_time number -- the last time a scan of the file system was performed
 ---@field config Config -- user config
+---@field last_search_result SearchResult? -- the last search result
 
 ---@class ConfigPreviewFiletypeSettings
 ---@field wrap_lines boolean? Wrap long lines in preview for this filetype
