@@ -521,11 +521,11 @@ fn scan_filesystem(
 
         let walker = WalkBuilder::new(base_path)
             .hidden(false)
-            .git_ignore(true)
-            .git_exclude(true)
-            .git_global(true)
-            .ignore(true)
-            .follow_links(false)
+            .git_ignore(false)
+            .git_exclude(false)
+            .git_global(false)
+            .ignore(false)
+            .follow_links(true)
             .build_parallel();
 
         let walker_start = std::time::Instant::now();
