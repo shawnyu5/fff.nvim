@@ -42,9 +42,14 @@ end
 
 ---@class FileItem
 ---@field path string
+---@field relative_path string
+---@field file_name string
 ---@field size integer
----@field mtime number
--- add any other FileItem fields your IntoLua returns
+---@field modified number
+---@field access_frecency_score number
+---@field modification_frecency_score number
+---@field total_frecency_score number
+---@field git_status number?
 
 ---@class Scores
 ---@field total number
