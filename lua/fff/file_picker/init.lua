@@ -13,8 +13,7 @@ local fuzzy = require('fff.fuzzy')
 function M.setup(config)
   state.config = vim.tbl_deep_extend('force', state.config, config or {})
 
-  local db_path = vim.fn.stdpath('cache') .. '/fff_nvim'
-  local ok, result = pcall(fuzzy.init_db, db_path, true)
+  local ok, result = pcall(fuzzy.init_db, state.config.frecency.db_path, true)
   if not ok then vim.notify('Failed to initialize frecency database: ' .. result, vim.log.levels.WARN) end
 
   ok, result = pcall(fuzzy.init_file_picker, state.config.base_path)
