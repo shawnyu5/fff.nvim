@@ -2,112 +2,113 @@
 local M = {}
 
 ---@class State
----@field initialized boolean if the file picker as been initialized
----@field base_path string the PWD of the picker
----@field last_scan_time number the last time a scan of the file system as performed
----@field config Config user config
+---@field initialized boolean -- if the file picker has been initialized
+---@field base_path string? -- the PWD of the picker
+---@field last_scan_time number -- the last time a scan of the file system was performed
+---@field config Config -- user config
 
----@class FFFConfigPreviewFiletypeSettings
----@field wrap_lines boolean|nil
----@field tail_lines integer|nil
+---@class ConfigPreviewFiletypeSettings
+---@field wrap_lines boolean? Wrap long lines in preview for this filetype
+---@field tail_lines integer? Number of tail lines to show (e.g. for logs)
 
----@class FFFConfigPreview
----@field enabled boolean
----@field width number
----@field max_lines integer
----@field max_size integer
----@field imagemagick_info_format_str string
----@field line_numbers boolean
----@field wrap_lines boolean
----@field show_file_info boolean
----@field binary_file_threshold integer
----@field filetypes table<string, FFFConfigPreviewFiletypeSettings>
+---@class ConfigPreview
+---@field enabled boolean Enable preview pane
+---@field width number Preview width as fraction of window
+---@field max_lines integer Maximum lines to load in preview
+---@field max_size integer Maximum file size in bytes (e.g. 10MB)
+---@field imagemagick_info_format_str string ImageMagick info format string
+---@field line_numbers boolean Show line numbers in preview
+---@field wrap_lines boolean Wrap long lines in preview
+---@field show_file_info boolean Show file info header in preview
+---@field binary_file_threshold integer Number of bytes to check for binary detection
+---@field filetypes table<string, ConfigPreviewFiletypeSettings> Per-filetype preview settings
 
----@class FFFConfigLayout
----@field prompt_position '"top"'|'"bottom"'
----@field preview_position '"right"'|'"left"'
----@field preview_width number
----@field height number
----@field width number
+---@class ConfigLayout
+---@field prompt_position '"top"'|'"bottom"' Position of input prompt
+---@field preview_position '"right"'|'"left"' Position of preview pane
+---@field preview_width number Width of preview pane
+---@field height number Window height as fraction of screen
+---@field width number Window width as fraction of screen
 
----@class FFFConfigKeymaps
----@field close string
----@field select string
----@field select_split string
----@field select_vsplit string
----@field select_tab string
----@field move_up string[]
----@field move_down string[]
----@field preview_scroll_up string
----@field preview_scroll_down string
----@field toggle_debug string
+---@class ConfigKeyMaps
+---@field close string Key to close the UI
+---@field select string Key to select item
+---@field select_split string Key to select and open in split
+---@field select_vsplit string Key to select and open in vertical split
+---@field select_tab string Key to select and open in new tab
+---@field move_up string[] Keys to move selection up (supports multiple)
+---@field move_down string[] Keys to move selection down (supports multiple)
+---@field preview_scroll_up string Key to scroll preview up
+---@field preview_scroll_down string Key to scroll preview down
+---@field toggle_debug string Key to toggle debug scores display
 
----@class FFFConfigHL
----@field border string
----@field normal string
----@field cursor string
----@field matched string
----@field title string
----@field prompt string
----@field active_file string
----@field frecency string
----@field debug string
+---@class ConfigHL
+---@field border string Highlight group for border
+---@field normal string Highlight group for normal text
+---@field cursor string Highlight group for cursor line
+---@field matched string Highlight group for matched text
+---@field title string Highlight group for window title
+---@field prompt string Highlight group for prompt text
+---@field active_file string Highlight group for active file line
+---@field frecency string Highlight group for frecency info
+---@field debug string Highlight group for debug messages
 
----@class FFFConfigFrecency
----@field enabled boolean
----@field db_path string
+---@class ConfigFrecency
+---@field enabled boolean Enable frecency tracking (file access frequency)
+---@field db_path string Path to frecency database file
 
----@class FFFConfigLogging
----@field enabled boolean
----@field log_file string
----@field log_level '"debug"'|'"info"'|'"warn"'|'"error"'
+---@class ConfigLogging
+---@field enabled boolean Enable logging
+---@field log_file string Log file location
+---@field log_level '"debug"'|'"info"'|'"warn"'|'"error"' Logging level
 
----@class FFFConfigUI
----@field wrap_paths boolean
----@field wrap_indent integer
----@field max_path_width integer
+---@class ConfigUI
+---@field wrap_paths boolean Wrap long file paths in the list UI
+---@field wrap_indent integer Indentation spaces for wrapped paths
+---@field max_path_width integer Maximum path width before wrapping
 
----@class FFFConfigImagePreview
----@field enabled boolean
----@field max_width integer
----@field max_height integer
+---@class ConfigImagePreview
+---@field enabled boolean Enable image preview (requires terminal support)
+---@field max_width integer Maximum image width in terminal columns
+---@field max_height integer Maximum image height in terminal lines
 
----@class FFFConfigIcons
----@field enabled boolean
+---@class ConfigIcons
+---@field enabled boolean Enable file icons display
 
----@class FFFConfigDebug
----@field enabled boolean
----@field show_scores boolean
+---@class ConfigDebug
+---@field enabled boolean Enable debug mode
+---@field show_scores boolean Show scoring information (toggle with keymap)
 
----@class FFFFindFileOpts
----@field git_ignore boolean whether to respect git ignore
----@field hidden boolean whether to show hidden files
----@field git_exclude boolean whether to respect `.git/info/exclude`
----@field git_global boolean whether to respect the global gitignore file, whose path is specified in git's `core.excludesFile` config option.
----@field follow_links boolean whether to follow symbolic links
----@field ignore boolean whether to respect .ignore files
+---@class FindFileOpts
+---@field git_ignore boolean Whether to respect .gitignore files
+---@field hidden boolean Whether to show hidden files
+---@field git_exclude boolean Whether to respect `.git/info/exclude`
+---@field git_global boolean Whether to respect global gitignore (`core.excludesFile`)
+---@field follow_links boolean Whether to follow symbolic links
+---@field ignore boolean Whether to respect `.ignore` files
 
 ---@class Config
----@field base_path string
----@field max_results integer
----@field max_threads integer
----@field prompt string
----@field title string
----@field ui_enabled boolean
----@field width number
----@field height number
----@field preview FFFConfigPreview
----@field layout FFFConfigLayout
----@field keymaps FFFConfigKeymaps
----@field hl FFFConfigHL
----@field frecency FFFConfigFrecency
----@field logging FFFConfigLogging
----@field ui FFFConfigUI
----@field image_preview FFFConfigImagePreview
----@field icons FFFConfigIcons
----@field debug FFFConfigDebug
+---@field base_path string Base directory for file indexing
+---@field max_results integer Maximum number of search results to display
+---@field max_threads integer Maximum number of threads for fuzzy search
+---@field prompt string Input prompt symbol
+---@field title string Window title
+---@field ui_enabled boolean Enable UI (default: true)
+---@field width number Window width as fraction of screen
+---@field height number Window height as fraction of screen
+---@field preview ConfigPreview Preview pane configuration
+---@field layout ConfigLayout Layout configuration (alternative to width/height)
+---@field keymaps ConfigKeyMaps Key mappings
+---@field hl ConfigHL Highlight groups
+---@field frecency ConfigFrecency Frecency tracking options
+---@field logging ConfigLogging Logging configuration
+---@field ui ConfigUI UI appearance options
+---@field image_preview ConfigImagePreview Image preview options
+---@field icons ConfigIcons File icon display options
+---@field debug ConfigDebug Debug options
 
 -- State
+---@type State
 M = {
   initialized = false,
   base_path = nil,
@@ -116,21 +117,27 @@ M = {
     base_path = vim.fn.getcwd(),
     max_results = 100,
     max_threads = 4,
-    show_hidden = false,
-    ignore_patterns = {},
+    prompt = '🪿 ',
+    title = 'FFF Files',
+    ui_enabled = true,
+    width = 0.8,
+    height = 0.8,
     preview = {
       enabled = true,
-      max_lines = 100,
-      max_size = 1024 * 1024, -- 1MB
-    },
-    keymaps = {
-      select = '<CR>',
-      vsplit = '<C-v>',
-      split = '<C-s>',
-      tab = '<C-t>',
-      close = '<Esc>',
-      preview_up = '<C-u>',
-      preview_down = '<C-d>',
+      width = 0.5,
+      max_lines = 5000,
+      max_size = 10 * 1024 * 1024,
+      imagemagick_info_format_str = '%m: %wx%h, %[colorspace], %q-bit',
+      line_numbers = false,
+      wrap_lines = false,
+      show_file_info = true,
+      binary_file_threshold = 1024,
+      filetypes = {
+        svg = { wrap_lines = true },
+        markdown = { wrap_lines = true },
+        text = { wrap_lines = true },
+        log = { tail_lines = 100 },
+      },
     },
     layout = {
       prompt_position = 'top',
@@ -138,6 +145,55 @@ M = {
       preview_width = 0.4,
       height = 0.8,
       width = 0.8,
+    },
+    keymaps = {
+      close = '<Esc>',
+      select = '<CR>',
+      select_split = '<C-s>',
+      select_vsplit = '<C-v>',
+      select_tab = '<C-t>',
+      move_up = { '<Up>', '<C-p>' },
+      move_down = { '<Down>', '<C-n>' },
+      preview_scroll_up = '<C-u>',
+      preview_scroll_down = '<C-d>',
+      toggle_debug = '<F2>',
+    },
+    hl = {
+      border = 'FloatBorder',
+      normal = 'Normal',
+      cursor = 'CursorLine',
+      matched = 'IncSearch',
+      title = 'Title',
+      prompt = 'Question',
+      active_file = 'Visual',
+      frecency = 'Number',
+      debug = 'Comment',
+    },
+    frecency = {
+      enabled = true,
+      db_path = vim.fn.stdpath('cache') .. '/fff_nvim',
+    },
+    ui = {
+      wrap_paths = true,
+      wrap_indent = 2,
+      max_path_width = 80,
+    },
+    logging = {
+      enabled = true,
+      log_file = vim.fn.stdpath('log') .. '/fff.log',
+      log_level = 'info',
+    },
+    image_preview = {
+      enabled = true,
+      max_width = 80,
+      max_height = 24,
+    },
+    icons = {
+      enabled = true,
+    },
+    debug = {
+      enabled = false,
+      show_scores = false,
     },
   },
 }
