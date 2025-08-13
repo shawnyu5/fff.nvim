@@ -179,8 +179,6 @@ end
 
 --- Setup window options
 function M.setup_windows()
-  local hl = M.state.config.hl
-
   vim.api.nvim_win_set_option(M.state.input_win, 'wrap', false)
   vim.api.nvim_win_set_option(M.state.input_win, 'cursorline', false)
   vim.api.nvim_win_set_option(M.state.input_win, 'number', false)
