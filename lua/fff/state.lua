@@ -178,7 +178,7 @@ M = {
       max_path_width = 80,
     },
     logging = {
-      enabled = true,
+      enabled = false,
       log_file = vim.fn.stdpath('log') .. '/fff.log',
       log_level = 'info',
     },
