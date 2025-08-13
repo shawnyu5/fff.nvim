@@ -155,10 +155,6 @@ end
 --- @return boolean
 function M.is_initialized() return state.initialized end
 
---- Get current configuration
---- @return table
-function M.get_config() return state.config end
-
 --- Get scan progress information
 --- @return table Progress information with scanned_files_count, is_scanning
 function M.get_scan_progress()
@@ -214,9 +210,5 @@ function M.wait_for_initial_scan(timeout_ms)
   end
   return result
 end
-
---- Get current state
---- @return State
-function M.get_state() return state end
 
 return M
