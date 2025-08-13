@@ -23,7 +23,6 @@ function M.setup(config)
   end
 
   state.initialized = true
-  state.base_path = state.config.base_path
 
   return true
 end

@@ -3,7 +3,6 @@ local M = {}
 
 ---@class State
 ---@field initialized boolean -- if the file picker has been initialized
----@field base_path string? -- the PWD of the picker
 ---@field last_scan_time number -- the last time a scan of the file system was performed
 ---@field config Config -- user config
 
@@ -111,7 +110,6 @@ local M = {}
 ---@type State
 M = {
   initialized = false,
-  base_path = nil,
   last_scan_time = 0,
   config = {
     base_path = vim.fn.getcwd(),
