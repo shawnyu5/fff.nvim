@@ -101,7 +101,6 @@ pub fn fuzzy_search_files(
         return Err(Error::FilePickerMissing)?;
     };
 
-    // TODO: can we make this function strongly typed?
     let results = FilePicker::fuzzy_search(
         picker.get_files(),
         &query,
