@@ -107,94 +107,97 @@ local M = {}
 ---@field icons ConfigIcons File icon display options
 ---@field debug ConfigDebug Debug options
 
+---@type Config
+local default_config = {
+  base_path = vim.fn.getcwd(),
+  max_results = 100,
+  max_threads = 4,
+  prompt = '🪿 ',
+  title = 'FFF Files',
+  ui_enabled = true,
+  width = 0.8,
+  height = 0.8,
+  preview = {
+    enabled = true,
+    width = 0.5,
+    max_lines = 5000,
+    max_size = 10 * 1024 * 1024,
+    imagemagick_info_format_str = '%m: %wx%h, %[colorspace], %q-bit',
+    line_numbers = false,
+    wrap_lines = false,
+    show_file_info = true,
+    binary_file_threshold = 1024,
+    filetypes = {
+      svg = { wrap_lines = true },
+      markdown = { wrap_lines = true },
+      text = { wrap_lines = true },
+      log = { tail_lines = 100 },
+    },
+  },
+  layout = {
+    prompt_position = 'top',
+    preview_position = 'right',
+    preview_width = 0.4,
+    height = 0.8,
+    width = 0.8,
+  },
+  keymaps = {
+    close = '<Esc>',
+    select = '<CR>',
+    select_split = '<C-s>',
+    select_vsplit = '<C-v>',
+    select_tab = '<C-t>',
+    move_up = { '<Up>', '<C-p>' },
+    move_down = { '<Down>', '<C-n>' },
+    preview_scroll_up = '<C-u>',
+    preview_scroll_down = '<C-d>',
+    toggle_debug = '<F2>',
+  },
+  hl = {
+    border = 'FloatBorder',
+    normal = 'Normal',
+    cursor = 'CursorLine',
+    matched = 'IncSearch',
+    title = 'Title',
+    prompt = 'Question',
+    active_file = 'Visual',
+    frecency = 'Number',
+    debug = 'Comment',
+  },
+  frecency = {
+    enabled = true,
+    db_path = vim.fn.stdpath('cache') .. '/fff_nvim',
+  },
+  ui = {
+    wrap_paths = true,
+    wrap_indent = 2,
+    max_path_width = 80,
+  },
+  logging = {
+    enabled = true,
+    log_file = vim.fn.stdpath('log') .. '/fff.log',
+    log_level = 'info',
+  },
+  image_preview = {
+    enabled = true,
+    max_width = 80,
+    max_height = 24,
+  },
+  icons = {
+    enabled = true,
+  },
+  debug = {
+    enabled = false,
+    show_scores = false,
+  },
+}
+
 -- State
 ---@type State
 M = {
   initialized = false,
   last_scan_time = 0,
-  config = {
-    base_path = vim.fn.getcwd(),
-    max_results = 100,
-    max_threads = 4,
-    prompt = '🪿 ',
-    title = 'FFF Files',
-    ui_enabled = true,
-    width = 0.8,
-    height = 0.8,
-    preview = {
-      enabled = true,
-      width = 0.5,
-      max_lines = 5000,
-      max_size = 10 * 1024 * 1024,
-      imagemagick_info_format_str = '%m: %wx%h, %[colorspace], %q-bit',
-      line_numbers = false,
-      wrap_lines = false,
-      show_file_info = true,
-      binary_file_threshold = 1024,
-      filetypes = {
-        svg = { wrap_lines = true },
-        markdown = { wrap_lines = true },
-        text = { wrap_lines = true },
-        log = { tail_lines = 100 },
-      },
-    },
-    layout = {
-      prompt_position = 'top',
-      preview_position = 'right',
-      preview_width = 0.4,
-      height = 0.8,
-      width = 0.8,
-    },
-    keymaps = {
-      close = '<Esc>',
-      select = '<CR>',
-      select_split = '<C-s>',
-      select_vsplit = '<C-v>',
-      select_tab = '<C-t>',
-      move_up = { '<Up>', '<C-p>' },
-      move_down = { '<Down>', '<C-n>' },
-      preview_scroll_up = '<C-u>',
-      preview_scroll_down = '<C-d>',
-      toggle_debug = '<F2>',
-    },
-    hl = {
-      border = 'FloatBorder',
-      normal = 'Normal',
-      cursor = 'CursorLine',
-      matched = 'IncSearch',
-      title = 'Title',
-      prompt = 'Question',
-      active_file = 'Visual',
-      frecency = 'Number',
-      debug = 'Comment',
-    },
-    frecency = {
-      enabled = true,
-      db_path = vim.fn.stdpath('cache') .. '/fff_nvim',
-    },
-    ui = {
-      wrap_paths = true,
-      wrap_indent = 2,
-      max_path_width = 80,
-    },
-    logging = {
-      enabled = true,
-      log_file = vim.fn.stdpath('log') .. '/fff.log',
-      log_level = 'info',
-    },
-    image_preview = {
-      enabled = true,
-      max_width = 80,
-      max_height = 24,
-    },
-    icons = {
-      enabled = true,
-    },
-    debug = {
-      enabled = false,
-      show_scores = false,
-    },
-  },
+  config = default_config,
 }
 
 return M
